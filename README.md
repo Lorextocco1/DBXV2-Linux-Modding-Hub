@@ -1,32 +1,45 @@
-# Dragon Ball Xenoverse 2 - Linux Modding Hub & Auto-Patcher 🐉
+# Dragon Ball Xenoverse 2 - Linux Modding Hub 🐧🔥
 
-Un Launcher nativo C# progettato per **Steam Deck, ROG Ally e Linux** che semplifica drasticamente il modding di Xenoverse 2.
-Risolve il problema delle DLL Override e offre un'interfaccia grafica per gestire installer e tool esterni.
+> "Lo aspettavate, lo avete cercato per lungo tempo voi di Linux (anzi, **noi** di Linux) e finalmente è qui: l'hub definitivo per giocare a Dragon Ball Xenoverse 2 con le mod su Linux!"
 
-## ⚡ Caratteristiche Principali
+Un Launcher nativo dal design semplice ed intuitivo. In pochi click avrete tutto sotto controllo.
 
-* **🛡️ Auto-Patcher Integrato:** Dimentica `WINEDLLOVERRIDES="xinput1_3=n,b"`. Il launcher rileva automaticamente se hai installato XV2Patcher (`xinput1_3.dll`) e inietta l'override necessario solo quando serve. Zero configurazione su Steam.
-* **📂 Modding Hub:** Pulsanti rapidi per avviare il gioco, l'installer delle mod (`xv2ins.exe`) o qualsiasi tool esterno (`.exe`) tramite un file browser integrato, senza chiudere il launcher.
-* **🎨 Design Ufficiale:** Interfaccia ispirata ai menu di gioco con effetti sonori visivi (hover gold) e supporto per wallpaper personalizzati.
-* **🐧 Native Performance:** Essendo compilato nativamente dentro Proton, è leggerissimo e non crasha come i vecchi script `.bat`.
+## 🌟 Perché questo Hub?
 
-## 🚀 Installazione Facile
+Non dovete fare altro che:
+1. Mettere l'installer delle Mod (`xv2ins.exe`) nella cartella del gioco.
+2. Inserire questo progetto nella directory base di Dragon Ball Xenoverse 2.
+3. Creare il file `.exe` tramite `CostruisciApp.bat`.
+4. Aggiungerlo a Steam come gioco non di steam... **e siete pronti!**
 
-1.  Scarica i file di questo progetto (`LauncherCode.cs`, `CostruisciApp.bat`, `logo.png`, `wallpaper.jpg`).
-2.  Copiali nella **cartella principale** di Dragon Ball Xenoverse 2 (dove si trova `bin/DBXV2.exe`).
-3.  **Primo Avvio (Compilazione):**
+### 🎮 Le Funzionalità
+
+* **[ 1 ] GIOCA & AUTO-PATCHER:**
+    Quando clicchi *Gioca*, non solo il gioco si apre, ma il tool **inserisce automaticamente quella maledetta stringa chilometrica** (`WINEDLLOVERRIDES`) nelle opzioni di avvio! Non dovete configurare niente.
+    *(In caso di problemi, trovate comunque la stringa manuale in fondo a questa pagina).*
+
+* **[ 2 ] MODS INSTALLER:**
+    Configurate e installate le mod classiche (file `.x2m`) in un attimo.
+
+* **[ 3 ] EXE MODS LAUNCHER:**
+    Configurate le aure e altri pack che hanno bisogno di eseguibili esterni, tutto senza chiudere il launcher.
+
+---
+
+## 🚀 Istruzioni di Installazione (Passo-Passo)
+
+1.  Scarica i file di questo progetto.
+2.  Copiali nella **cartella principale** di Dragon Ball Xenoverse 2 (dove c'è `bin/DBXV2.exe`).
+3.  **Primo Avvio:**
     * Su Steam, aggiungi `CostruisciApp.bat` come gioco non di Steam.
     * Imposta compatibilità: **Proton Experimental**.
-    * Avvialo una volta.
-4.  Verrà creato un nuovo file **`DBXV2Launcher.exe`**.
-5.  **Configurazione Finale:**
-    * Su Steam, cambia il collegamento per puntare a `DBXV2Launcher.exe`.
-    * **IMPORTANTE:** Nel campo "Inizia in" (Start In), assicurati che sia selezionata la cartella principale del gioco, altrimenti le immagini non verranno caricate.
-    * Cancella eventuali opzioni di avvio vecchie.
+    * Avvialo una volta per generare `DBXV2Launcher.exe`.
+4.  **Configurazione Finale:**
+    * Punta il collegamento di Steam a `DBXV2Launcher.exe`.
+    * **IMPORTANTE:** Imposta il campo "Inizia in" (Start In) sulla cartella principale del gioco.
 
-## 🛠️ Requisiti
-* Una copia di Dragon Ball Xenoverse 2.
-* Linux / SteamOS (Steam Deck) / BazziteOS (ROG Ally).
-* Per le mod: XV2Patcher e XV2 Installer (da scaricare separatamente).
+### ⚠️ Nota sulla Stringa Manuale
+Se l'automazione non dovesse funzionare sul vostro sistema specifico, ecco la "stringa chilometrica" da copiare e incollare nelle Opzioni di Avvio di Steam (usate CTRL+C / CTRL+V):
+`WINEDLLOVERRIDES="xinput1_3=n,b" %command%`
 
-Buon divertimento Super Saiyan! 🔥
+Buon divertimento con il vostro Xenoverse 2 customizzato su Linux! 🔥
