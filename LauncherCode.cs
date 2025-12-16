@@ -103,16 +103,17 @@ namespace XenoverseLauncher
             btnExit = CreateXV2Button("[ 4 ]  ESCI", startY + spacing * 3);
             btnExit.Click += (sender, e) => { this.Close(); };
 
-            // --- 5. FOOTER (Posizionato Perfettamente) ---
+            // --- 5. FIRMA (MARCHIO DI FABBRICA COERENTE) ---
             Label footer = new Label();
-            footer.Text = "XV2 MODDING HUB | PROTON AUTO-PATCHER";
-            footer.Font = new Font("Segoe UI", 8, FontStyle.Regular);
-            footer.ForeColor = Color.FromArgb(150, 255, 255, 255); // Bianco semi-trasparente
+            // Testo aggiornato con il tuo nome
+            footer.Text = "XV2 MODDING HUB | LOREXTHEGAMER";
+            footer.Font = new Font("Segoe UI", 8, FontStyle.Bold); // Un po' più marcato
+            // Colore Nero Solido per coerenza con Sonic
+            footer.ForeColor = Color.Black; 
             footer.AutoSize = true;
             footer.BackColor = Color.Transparent;
             
-            // Calcolo preciso: Larghezza Finestra - Larghezza Testo - 20px di margine destro
-            // Altezza Finestra - 25px margine inferiore
+            // Posizionamento Bottom-Right
             footer.Location = new Point(this.ClientSize.Width - footer.PreferredWidth - 20, this.ClientSize.Height - 25);
             
             this.Controls.Add(footer);
@@ -184,7 +185,6 @@ namespace XenoverseLauncher
                     startInfo.UseShellExecute = false; 
 
                     // --- AUTO-PATCHER LOGIC ---
-                    // Se avviamo il gioco e c'è xinput1_3.dll, iniettiamo l'override.
                     if (exeName.ToLower().Contains("dbxv2.exe")) 
                     {
                         string patcherDll = Path.Combine(workingDir, "xinput1_3.dll");
