@@ -14,14 +14,16 @@ Non dovete fare altro che:
 
 ### 🎮 Le Funzionalità
 
-* **[ 1 ] GIOCA & AUTO-PATCHER:**
+* **GIOCA & AUTO-PATCHER:**
     Quando clicchi *Gioca*, non solo il gioco si apre, ma il tool **inserisce automaticamente quella maledetta stringa chilometrica** (`WINEDLLOVERRIDES`) nelle opzioni di avvio! Non dovete configurare niente.
-    *(In caso di problemi, trovate comunque la stringa manuale in fondo a questa pagina).*
 
-* **[ 2 ] MODS INSTALLER:**
-    Configurate e installate le mod classiche (file `.x2m`) in un attimo.
+* **INSTALLA X2M:**
+    Funzione rapida per installare una mod `.x2m` al volo senza dover aprire l'interfaccia completa dell'installer. Selezioni il file e via!
 
-* **[ 3 ] EXE MODS LAUNCHER:**
+* **MODS INSTALLER (UI):**
+    Apre l'interfaccia completa di XV2 Installer per gestire, rimuovere o ordinare le mod.
+
+* **EXE MODS LAUNCHER:**
     Configurate le aure e altri pack che hanno bisogno di eseguibili esterni, tutto senza chiudere il launcher.
 
 ---
@@ -39,7 +41,7 @@ Non dovete fare altro che:
     * **IMPORTANTE:** Imposta il campo "Inizia in" (Start In) sulla cartella principale del gioco.
 
 ### ⚠️ Nota sulla Stringa Manuale
-Se l'automazione non dovesse funzionare sul vostro sistema specifico, ecco la "stringa chilometrica" da copiare e incollare nelle Opzioni di Avvio di Steam (usate CTRL+C / CTRL+V):
+Se l'automazione non dovesse funzionare sul vostro sistema specifico, ecco la stringa da copiare nelle Opzioni di Avvio di Steam:
 `WINEDLLOVERRIDES="xinput1_3=n,b" %command%`
 
 Buon divertimento con il vostro Xenoverse 2 customizzato su Linux! 🔥
