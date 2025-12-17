@@ -20,6 +20,7 @@ namespace XenoverseLauncher
     {
         private PictureBox logoBox;
         private Button btnPlay;
+        private Button btnInstallX2M; // NUOVO TASTO
         private Button btnMods;
         private Button btnExeMods;
         private Button btnExit;
@@ -30,7 +31,7 @@ namespace XenoverseLauncher
         Color xv2GoldHover = ColorTranslator.FromHtml("#FFD700");
         Color xv2DarkGlass = Color.FromArgb(180, 10, 10, 25); 
 
-        // Margine sinistro per l'allineamento (Stile Nuovo Menu)
+        // Margine sinistro (Ora usato solo per posizionare il contenitore, il testo è centrato)
         int leftMargin = 80; 
 
         public MainForm()
@@ -43,9 +44,9 @@ namespace XenoverseLauncher
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.BackColor = Color.FromArgb(10, 10, 20); // Colore di fallback
+            this.BackColor = Color.FromArgb(10, 10, 20); 
 
-            // Icona del gioco
+            // Icona
             try {
                 string gameExe = Path.Combine(baseDir, "bin", "DBXV2.exe");
                 if (File.Exists(gameExe)) this.Icon = Icon.ExtractAssociatedIcon(gameExe);
@@ -66,7 +67,7 @@ namespace XenoverseLauncher
             // --- 3. LOGO ---
             logoBox = new PictureBox();
             logoBox.Size = new Size(450, 160);
-            logoBox.Location = new Point(leftMargin, 30);
+            logoBox.Location = new Point(leftMargin, 20); // Un po' più in alto per fare spazio
             logoBox.SizeMode = PictureBoxSizeMode.Zoom;
             logoBox.BackColor = Color.Transparent; 
 
@@ -77,45 +78,47 @@ namespace XenoverseLauncher
             this.Controls.Add(logoBox);
 
             // --- 4. BOTTONI ---
-            int startY = 210;
-            int spacing = 65;
+            // Abbiamo 5 bottoni ora, gestiamo bene lo spazio
+            int startY = 190; 
+            int spacing = 60; // Spazio leggermente ridotto per farcene stare 5
 
             // TASTO 1: GIOCA
-            btnPlay = CreateXV2Button("[ 1 ]  GIOCA", startY);
+            btnPlay = CreateXV2Button("GIOCA", startY);
             btnPlay.Click += (sender, e) => { 
                 LanciaApp("bin", "DBXV2.exe"); 
                 this.Close(); 
             };
 
-            // TASTO 2: MODS INSTALLER
-            btnMods = CreateXV2Button("[ 2 ]  MODS INSTALLER", startY + spacing);
+            // TASTO 2: INSTALLA X2M (NUOVO - Funzione Rapida)
+            btnInstallX2M = CreateXV2Button("INSTALLA X2M", startY + spacing);
+            btnInstallX2M.Click += (sender, e) => { 
+                InstallaModX2M();
+            };
+
+            // TASTO 3: MODS INSTALLER (Apre il tool completo)
+            btnMods = CreateXV2Button("MODS INSTALLER (UI)", startY + spacing * 2);
             btnMods.Click += (sender, e) => { 
                 LanciaApp("XV2INS", "xv2ins.exe"); 
             };
 
-            // TASTO 3: EXE MODS LAUNCHER
-            btnExeMods = CreateXV2Button("[ 3 ]  EXE MODS LAUNCHER", startY + spacing * 2);
+            // TASTO 4: EXE MODS LAUNCHER
+            btnExeMods = CreateXV2Button("EXE MODS LAUNCHER", startY + spacing * 3);
             btnExeMods.Click += (sender, e) => { 
                 ScegliEdEseguiExe();
             };
 
-            // TASTO 4: ESCI
-            btnExit = CreateXV2Button("[ 4 ]  ESCI", startY + spacing * 3);
+            // TASTO 5: ESCI
+            btnExit = CreateXV2Button("ESCI", startY + spacing * 4);
             btnExit.Click += (sender, e) => { this.Close(); };
 
-            // --- 5. FIRMA (MARCHIO DI FABBRICA COERENTE) ---
+            // --- 5. FIRMA ---
             Label footer = new Label();
-            // Testo aggiornato con il tuo nome
             footer.Text = "XV2 MODDING HUB | LOREXTHEGAMER";
-            footer.Font = new Font("Segoe UI", 8, FontStyle.Bold); // Un po' più marcato
-            // Colore Nero Solido per coerenza con Sonic
+            footer.Font = new Font("Segoe UI", 8, FontStyle.Bold);
             footer.ForeColor = Color.Black; 
             footer.AutoSize = true;
             footer.BackColor = Color.Transparent;
-            
-            // Posizionamento Bottom-Right
             footer.Location = new Point(this.ClientSize.Width - footer.PreferredWidth - 20, this.ClientSize.Height - 25);
-            
             this.Controls.Add(footer);
         }
 
@@ -123,19 +126,21 @@ namespace XenoverseLauncher
         {
             Button btn = new Button();
             btn.Text = text;
-            btn.Size = new Size(350, 55);
+            btn.Size = new Size(350, 50); // Leggermente più sottili
             btn.Location = new Point(leftMargin, top);
             btn.FlatStyle = FlatStyle.Flat;
             btn.Font = new Font("Segoe UI Black", 14, FontStyle.Bold);
-            btn.TextAlign = ContentAlignment.MiddleLeft;
-            btn.Padding = new Padding(20, 0, 0, 0);
+            
+            // MODIFICA RICHIESTA: Testo Centrato
+            btn.TextAlign = ContentAlignment.MiddleCenter;
+            btn.Padding = new Padding(0); // Rimosso padding laterale
+            
             btn.Cursor = Cursors.Hand;
             btn.BackColor = xv2DarkGlass;
             btn.ForeColor = xv2OrangeText;
             btn.FlatAppearance.BorderColor = xv2OrangeBorder;
             btn.FlatAppearance.BorderSize = 2;
             
-            // Effetto Hover (Super Saiyan)
             btn.MouseEnter += (s, e) => { 
                 btn.BackColor = xv2GoldHover;
                 btn.ForeColor = Color.FromArgb(20, 20, 20);
@@ -149,6 +154,40 @@ namespace XenoverseLauncher
 
             this.Controls.Add(btn);
             return btn;
+        }
+
+        // --- NUOVA FUNZIONE: INSTALLAZIONE DIRETTA X2M ---
+        private void InstallaModX2M()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Seleziona la Mod (.x2m) da installare";
+            ofd.Filter = "File X2M (.x2m)|*.x2m|Tutti i file (*.*)|*.*";
+            ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try {
+                    // Percorso dell'installer xv2ins.exe
+                    string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string installerPath = Path.Combine(baseDir, "XV2INS", "xv2ins.exe");
+                    string workingDir = Path.Combine(baseDir, "XV2INS");
+
+                    if (File.Exists(installerPath)) {
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                        startInfo.FileName = installerPath;
+                        startInfo.WorkingDirectory = workingDir;
+                        
+                        // Passiamo il percorso del file X2M come argomento tra virgolette
+                        startInfo.Arguments = $"\"{ofd.FileName}\""; 
+                        
+                        Process.Start(startInfo);
+                    } else {
+                        MessageBox.Show("Impossibile trovare xv2ins.exe nella cartella XV2INS!", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                } catch (Exception ex) {
+                    MessageBox.Show("Errore durante l'installazione: " + ex.Message);
+                }
+            }
         }
 
         private void ScegliEdEseguiExe()
@@ -184,7 +223,6 @@ namespace XenoverseLauncher
                     startInfo.WorkingDirectory = workingDir;
                     startInfo.UseShellExecute = false; 
 
-                    // --- AUTO-PATCHER LOGIC ---
                     if (exeName.ToLower().Contains("dbxv2.exe")) 
                     {
                         string patcherDll = Path.Combine(workingDir, "xinput1_3.dll");
