@@ -20,12 +20,13 @@ namespace XenoverseLauncher
     public class MainForm : Form
     {
         private PictureBox logoBox;
+        // Definizione dei 7 pulsanti
         private Button btnPlay;
         private Button btnSite;
         private Button btnInstallX2M;
         private Button btnMods;
         private Button btnExeMods;
-        private Button btnModsFolder;
+        private Button btnModsFolder; // Questo tasto ora è "intelligente" (usa 7-Zip se c'è)
         private Button btnExit;
 
         // Colori stile XV2
@@ -34,20 +35,16 @@ namespace XenoverseLauncher
         Color xv2GoldHover = ColorTranslator.FromHtml("#FFD700");
         Color xv2DarkGlass = Color.FromArgb(180, 10, 10, 25); 
 
-        // Margine sinistro
-        int leftMargin = 100; // Leggermente aumentato per il 16:9
+        // Margine sinistro (aumentato per il layout HD 16:9)
+        int leftMargin = 100; 
 
         public MainForm()
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             
-            // --- 1. SETUP FINESTRA (16:9 Widescreen) ---
-            this.Text = "Dragon Ball Xenoverse 2 - Linux Modding Hub v2.5.0";
-            
-            // RISOLUZIONE HD STANDARD (16:9)
-            // Perfetta per Steam Deck (riempie la larghezza) e Monitor PC
-            this.Size = new Size(1280, 720); 
-            
+            // --- 1. SETUP FINESTRA (16:9 HD) ---
+            this.Text = "Dragon Ball Xenoverse 2 - Linux Modding Hub v2.6.0";
+            this.Size = new Size(1280, 720); // Risoluzione Widescreen
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -68,7 +65,7 @@ namespace XenoverseLauncher
 
             if (!string.IsNullOrEmpty(wallPath)) {
                 this.BackgroundImage = Image.FromFile(wallPath);
-                this.BackgroundImageLayout = ImageLayout.Stretch; // Ora non streccerà più perché l'aspect ratio è giusto!
+                this.BackgroundImageLayout = ImageLayout.Stretch;
             }
 
             // --- 3. LOGO ---
@@ -85,7 +82,7 @@ namespace XenoverseLauncher
             this.Controls.Add(logoBox);
 
             // --- 4. BOTTONI ---
-            int startY = 210; // Spostati leggermente più in basso per il layout HD
+            int startY = 210; 
             int spacing = 58;
 
             // 1. GIOCA
@@ -119,10 +116,10 @@ namespace XenoverseLauncher
                 ScegliEdEseguiExe();
             };
 
-            // 6. CARTELLA MODS
+            // 6. CARTELLA MODS (Integrazione 7-Zip)
             btnModsFolder = CreateXV2Button("CARTELLA MODS", startY + spacing * 5);
             btnModsFolder.Click += (sender, e) => { 
-                ApriCartellaMods();
+                ApriCartellaModsCon7Zip();
             };
 
             // 7. ESCI
@@ -132,15 +129,15 @@ namespace XenoverseLauncher
             // --- 5. FIRMA ---
             Label footer = new Label();
             footer.Text = "XV2 MODDING HUB | LOREXTHEGAMER";
-            footer.Font = new Font("Segoe UI", 9, FontStyle.Bold); // Font leggermente più grande per l'HD
+            footer.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             footer.ForeColor = Color.Black; 
             footer.AutoSize = true;
             footer.BackColor = Color.Transparent;
-            // Posizionamento dinamico in basso a destra
             footer.Location = new Point(this.ClientSize.Width - footer.PreferredWidth - 20, this.ClientSize.Height - 30);
             this.Controls.Add(footer);
         }
 
+        // --- FUNZIONE CREAZIONE BOTTONI ---
         private Button CreateXV2Button(string text, int top)
         {
             Button btn = new Button();
@@ -172,13 +169,40 @@ namespace XenoverseLauncher
             return btn;
         }
 
-        // --- FUNZIONI DI SUPPORTO (BROWSER, LINK, CARTELLE) ---
+        // --- FUNZIONE APRI CARTELLA INTELLIGENTE (7-Zip o Explorer) ---
+        private void ApriCartellaModsCon7Zip()
+        {
+            string modsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods");
+            
+            // Crea la cartella se non esiste
+            if (!Directory.Exists(modsPath)) Directory.CreateDirectory(modsPath);
 
+            // 1. Cerca 7-Zip Portable
+            string sevenZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Apps", "7-Zip", "7zFM.exe");
+
+            if (File.Exists(sevenZipPath))
+            {
+                // Se 7-Zip esiste, apri quello puntando alla cartella Mods
+                try {
+                    Process.Start(sevenZipPath, $"\"{modsPath}\"");
+                    return; // Successo, usciamo
+                } catch {}
+            }
+
+            // 2. Fallback: Se non c'è 7-Zip, usa il comando CMD per aprire la cartella normale
+            try {
+                Process.Start("cmd.exe", $"/c start \"\" \"{modsPath}\"");
+            } catch {
+                 MessageBox.Show("Impossibile aprire la cartella Mods.");
+            }
+        }
+
+        // --- FUNZIONE APRI LINK INTELLIGENTE (Browser Portable o Sistema) ---
         private void ApriLink(string url)
         {
-            // 1. Cerca Browser Portatile nella cartella "Browser"
             try
             {
+                // Cerca browser portatile nella cartella "Browser"
                 string browserFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Browser");
                 if (Directory.Exists(browserFolder))
                 {
@@ -192,36 +216,22 @@ namespace XenoverseLauncher
             }
             catch {}
 
-            // 2. Fallback CMD
-            try
-            {
+            // Fallback CMD
+            try {
                 Process.Start("cmd.exe", $"/c start \"\" \"{url}\"");
             }
-            catch
-            {
-                // 3. Fallback Linux
-                try
-                {
+            catch {
+                // Fallback estremo Linux
+                try {
                     Process.Start("Z:\\usr\\bin\\xdg-open", url);
                 }
-                catch
-                {
+                catch {
                     MessageBox.Show("Nessun browser trovato.\nScarica Mypal 68 e mettilo nella cartella 'Browser'.");
                 }
             }
         }
 
-        private void ApriCartellaMods()
-        {
-            try {
-                string modsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods");
-                if (!Directory.Exists(modsPath)) Directory.CreateDirectory(modsPath);
-                Process.Start("cmd.exe", $"/c start \"\" \"{modsPath}\"");
-            } catch (Exception ex) {
-                MessageBox.Show("Errore: " + ex.Message);
-            }
-        }
-
+        // --- FUNZIONE INSTALLAZIONE X2M ---
         private void InstallaModX2M()
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -243,7 +253,7 @@ namespace XenoverseLauncher
                         startInfo.Arguments = $"\"{ofd.FileName}\""; 
                         Process.Start(startInfo);
                     } else {
-                        MessageBox.Show("Manca xv2ins.exe!", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Manca xv2ins.exe in XV2INS!", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 } catch (Exception ex) {
                     MessageBox.Show("Errore: " + ex.Message);
@@ -251,6 +261,7 @@ namespace XenoverseLauncher
             }
         }
 
+        // --- FUNZIONE LANCIO EXE GENERICO ---
         private void ScegliEdEseguiExe()
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -271,6 +282,7 @@ namespace XenoverseLauncher
             }
         }
 
+        // --- FUNZIONE LANCIO GIOCO E APP ---
         private void LanciaApp(string folder, string exeName)
         {
             try {
@@ -284,6 +296,7 @@ namespace XenoverseLauncher
                     startInfo.WorkingDirectory = workingDir;
                     startInfo.UseShellExecute = false; 
 
+                    // Auto-Patcher Logic per le mod
                     if (exeName.ToLower().Contains("dbxv2.exe")) 
                     {
                         string patcherDll = Path.Combine(workingDir, "xinput1_3.dll");
